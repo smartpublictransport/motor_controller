@@ -12,8 +12,9 @@ MOTOR_STATUS get_motor_status ()
     return motorStatus;
 }
 
-int start_aceleration ()
+int init_aceleration ()
 {
+
     if (motorStatus != IDLE) {
         return  -1;
     }

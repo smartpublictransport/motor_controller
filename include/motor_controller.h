@@ -15,6 +15,7 @@ MOTOR_STATUS get_motor_status ();
 /* API called when POD start moving,  assummes POD is parked*/
 int start_aceleration ();
 
+int init_aceleration ();
 
 int increase_speed( int speed, int acceleration);
 
