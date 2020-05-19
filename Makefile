@@ -9,10 +9,10 @@ LIB_OBJ = $(LIB_SRC:.cpp = .o)
 OBJ = $(SRC:.cpp = .o)
 
 test: $(OBJ)
-	$(CC) -L$(LIBPATH) $(CFLAGS) -lTest -lmotor_driver -o test $(OBJ) 
+	$(CC) -L$(LIBPATH) $(CFLAGS) -lTest -lmotor_driver -o test $(OBJ) -lrt 
 
 lib: $(LIB_OBJ) 
-	$(CC) -I$(INC) $(CFLAGS) -fPIC -shared -o libTest.so $(LIB_OBJ) 
+	$(CC) -I$(INC) $(CFLAGS) -fPIC -shared -o libTest.so $(LIB_OBJ) -lrt 
 
 clean:
 	rm -f core *.o

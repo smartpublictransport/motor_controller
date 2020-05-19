@@ -1,45 +1,42 @@
 #include "motor_controller.h"
 #include <iostream>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <mqueue.h>
+#include <unistd.h>
 
-#define PORT 8080
+#define PMODE 0665
 
 int start_aceleration ()
 {
+    int status;
+    struct mq_attr attr;
+    attr.mq_maxmsg = 10;
+    attr.mq_msgsize   = 20;
+    std::string hello = "Hello from client";
+    char buffer[100] = {0};
 
-    int sock = 0, valread; 
-    struct sockaddr_in serv_addr; 
-    std::string hello = "Hello from client"; 
-    char buffer[1024] = {0}; 
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
-    { 
-        std::cout << "\n Socket creation error \n"; 
-        return -1; 
-    } 
-          
-    serv_addr.sin_family = AF_INET; 
-    serv_addr.sin_port = htons(PORT); 
-                      
-    // Convert IPv4 and IPv6 addresses from text to binary form 
-    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)  
-    { 
-        std::cout << "\nInvalid address/ Address not supported \n"; 
-        return -1; 
-    } 
-                           
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
-    { 
-       std::cout << "\nConnection Failed \n"; 
-       return -1; 
-    } 
-    send(sock , hello.c_str(), hello.length() , 0 ); 
-    std::cout << "Hello message sent\n"; 
-    valread = read( sock , buffer, 1024); 
-    if (valread < 0) {return  -1;}
-    //std::cout << "%s\n",buffer ; 
-    return 0; 
-
+    //write/create - attr needed because of O_CREAT
+    mqd_t mqfd = mq_open("/mcontrol", O_RDWR|O_CREAT, PMODE, &attr);
+    if (mqfd == -1){
+        perror("mq open error");
+        exit(0);
+    }
+    status = mq_send (mqfd, hello.c_str(), hello.length(), 0);
+    if (status == -1) {
+        perror("mq_send failure\n");
+    }
+    else {
+        std::cout << "mq_send successful \n";
+        status = mq_receive (mqfd, buffer, 100, 0);
+        if (status == -1) {
+            perror ("mq_receive failure");
+        }
+        else { 
+            std::cout << buffer << std::endl;
+        }
+    }
+    mq_close(mqfd);
+    mq_unlink("/mcontrol");
+    return 0;
 }
