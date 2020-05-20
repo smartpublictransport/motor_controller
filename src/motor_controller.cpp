@@ -6,7 +6,6 @@ extern MOTOR_STATUS motorStatus;
 extern Motor engine1;
 
 
-
 MOTOR_STATUS get_motor_status ()
 {
     return motorStatus;

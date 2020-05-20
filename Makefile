@@ -12,7 +12,7 @@ test: $(OBJ)
 	$(CC) -L$(LIBPATH) $(CFLAGS) -lTest -lmotor_driver -o test $(OBJ) -lrt 
 
 lib: $(LIB_OBJ) 
-	$(CC) -I$(INC) $(CFLAGS) -fPIC -shared -o libTest.so $(LIB_OBJ) -lrt 
+	$(CC) -I$(INC) -L$(LIBPATH) $(CFLAGS) -fPIC -shared -o libTest.so $(LIB_OBJ) -lrt -lmotor_driver 
 
 clean:
-	rm -f core *.o
+	rm -f *.o *.so

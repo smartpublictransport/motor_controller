@@ -4,11 +4,15 @@
 #include <sys/wait.h>
 #include <mqueue.h>
 #include <unistd.h>
+#include "../../motor_driver/motor.h"
 
 #define PMODE 0665
+MOTOR_STATUS motorStatus;
+Motor engine1;
 
 int start_aceleration ()
 {
+#ifdef MSGQ
     int status;
     struct mq_attr attr;
     attr.mq_maxmsg = 10;
@@ -39,4 +43,12 @@ int start_aceleration ()
     mq_close(mqfd);
     mq_unlink("/mcontrol");
     return 0;
+#endif
+
+
+    engine1.set_acceleration(3);
+    engine1.set_speed(10);
+    motorStatus = RUNNING;
+    return 0;
+
 }

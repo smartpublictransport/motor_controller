@@ -37,6 +37,7 @@ int main ()
     }
     else {
         std::cout << buffer << std::endl;
+        init_aceleration();
         status = mq_send (mqfd, hello.c_str(), hello.length(), 0);
         if (status == -1) {
             perror ("mq_receive failure");
